@@ -95,14 +95,14 @@ Describe 'Arithmetic Operators' {
 
         It 'works similarly to addition' {
             12 - 7 | Should -Be 5
-            __ | Should -Be (11 - 3.5)
+            7.5 | Should -Be (11 - 3.5)
         }
 
         It 'cannot be used with strings' {
             {'hello' - 'h'} | Should -Throw
 
             # Except, of course, when the string contains a useable number.
-            __ | Should -Be ('12' - '7.5')
+            4.5 | Should -Be ('12' - '7.5')
 
             # In other words, subtraction only operates on numerical values.
             {@(1, 2) - 1} | Should -Throw
@@ -112,13 +112,13 @@ Describe 'Arithmetic Operators' {
     Context 'Multiplication' {
 
         It 'can be used on both integer and non-integer numerals' {
-            __ | Should -Be (12 * 4)
+            48 | Should -Be (12 * 4)
             12.1 * 2 | Should -Be 24.2
         }
 
         It 'can also be used on strings' {
-            'A' * 4 -eq 'FILL_ME_IN' | Should -BeTrue
-            __ * 4 -eq 'NANANANA' | Should -BeTrue
+            'A' * 4 -eq 'AAAA' | Should -BeTrue
+            'NA' * 4 -eq 'NANANANA' | Should -BeTrue
         }
     }
 
@@ -132,7 +132,7 @@ Describe 'Arithmetic Operators' {
             # Unlike with other numerical operators, however, division often results
             # in a non-integer (double) value even when both operands are integers.
             3 / 4 | Should -Be 0.75
-            __ / 10 -eq 0.5 | Should -BeTrue
+            5 / 10 -eq 0.5 | Should -BeTrue
         }
     }
 
@@ -142,7 +142,7 @@ Describe 'Arithmetic Operators' {
         # division, and then returns the integer value of the remainder.
         It 'is usually used with integers' {
             $Remainder = 15 % 7
-            __ | Should -Be $Remainder
+            1 | Should -Be $Remainder
         }
 
         It 'cannot be used on non-numeric values' {
@@ -151,12 +151,12 @@ Describe 'Arithmetic Operators' {
                 $String = 'hello!'
                 $String % 4
                 # Only a partially matching phrase from the error message is necessary.
-            }  | Should -Throw -ExpectedMessage __
+            }  | Should -Throw -ExpectedMessage "Input string was not in a correct format."
             {
                 # If you have trouble, try doing something similar in the console to see what happens.
                 $Array = 1, 10, 20
                 $Array % 4
-            } | Should -Throw -ExpectedMessage __
+            } | Should -Throw -ExpectedMessage "Method invocation failed because [System.Object[]] does not contain a method named 'op_Modulus'."
         }
     }
 }
@@ -175,18 +175,18 @@ Describe 'Assignment/Arithmetic Combination Operators' {
         $Value | Should -Be 19
 
         $Value -= 3
-        __ | Should -Be $Value
+        16 | Should -Be $Value
 
         # We can even combine multiplication and division with assignment
         $Value /= 2
         $Value | Should -Be 8
 
         $Value *= 3
-        __ | Should -Be $Value
+        24 | Should -Be $Value
 
         # Modulus hasn't been left out, either.
         $Value = 12
         $Value %= 4
-        __ | Should -Be $Value
+        0 | Should -Be $Value
     }
 }

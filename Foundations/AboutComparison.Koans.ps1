@@ -22,21 +22,21 @@ Describe 'Comparison Operators' {
 
         It 'is a simple test' {
             $true -eq $false | Should -Be $false
-            __ | Should -Be (1 -eq 1)
+            $true | Should -Be (1 -eq 1)
         }
 
         It 'will attempt to convert types' {
             # Boolean values are considered the same as 0 or 1 in integer terms, and vice versa
             $true -eq 1 | Should -Be $true
             $false -ne 0 | Should -Be $false
-            __ | Should -Be ($true -eq 10) # What about higher numbers?
-            __ | Should -Be (-10 -eq $false) # What about negative numbers?
+            $true | Should -Be ($true -eq 10) # What about higher numbers?
+            $false | Should -Be (-10 -eq $false) # What about negative numbers?
 
-            __ | Should -Be (10 -ne 1)
+            $true | Should -Be (10 -ne 1)
 
             # Strings and numbers will also be converted if possible
             '1' -eq 1 | Should -Be $true
-            __ | Should -Be (10 -ne '10')
+            $false | Should -Be (10 -ne '10')
         }
 
         It 'has a strict behaviour with most strings' {
@@ -44,18 +44,18 @@ Describe 'Comparison Operators' {
             'string' -eq 1 | Should -Be $false
 
             # How should strings cast to boolean?
-            __ | Should -Be ($true -eq 'Hello!')
+            $true | Should -Be ($true -eq 'Hello!')
 
             # What about an empty string?
-            __ | Should -Be ($true -eq '')
+            $false | Should -Be ($true -eq '')
 
             # What about a string containing a number?
-            __ | Should -Be ($false -ne '0')
+            $true | Should -Be ($false -ne '0')
 
             # In short: strings don't care about their contents when cast to boolean
-            __ | Should -Be ($true -eq 'False')
-            __ | Should -Be ($false -eq [string]$false)
-            [string]$false | Should -Be '__'
+            $true | Should -Be ($true -eq 'False')
+            $false | Should -Be ($false -eq [string]$false)
+            [string]$false | Should -Be 'False'
         }
 
         It 'changes behaviour with arrays' {
@@ -64,7 +64,7 @@ Describe 'Comparison Operators' {
 
             $Array -eq 2 | Should -Be 2
             $Array -eq 11 | Should -Be $null
-            $Array -ne 5 | Should -Be @(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+            $Array -ne 5 | Should -Be @(1, 2, 3, 4, 6, 7, 8, 9, 10)
         }
     }
 
@@ -72,18 +72,17 @@ Describe 'Comparison Operators' {
 
         It 'will compare values' {
             11 -gt 6 | Should -BeTrue
-            __ -gt 14 | Should -BeTrue
+            15 -gt 14 | Should -BeTrue
 
             10 -lt 20 | Should -BeTrue
-            __ -lt 0 | Should -BeTrue
+            -1 -lt 0 | Should -BeTrue
         }
 
         It 'will often return many items from arrays' {
             $Array = 1, 5, 10, 15, 20, 25, 30
 
             $Array -gt 30 | Should -Be $null
-            $Array -lt 10 | Should -Be @(1, 10)
-
+            $Array -lt 10 | Should -Be @(1, 5)
         }
     }
 
@@ -93,8 +92,8 @@ Describe 'Comparison Operators' {
             $Array = 1, 2, 3, 4, 5
 
             $Array -ge 3 | Should -Be @(3, 4, 5)
-            $Array -le 2 | Should -Be @(1, 2, 3, 4)
-            __ | Should -Be ($Array -ge 5)
+            $Array -le 2 | Should -Be @(1,2)
+            5 | Should -Be ($Array -ge 5)
         }
     }
 
@@ -102,7 +101,7 @@ Describe 'Comparison Operators' {
 
         It 'returns $true if the right hand value occurs in the left hand array' {
             $Array = 1, 2, 3, 4, 5
-            $SearchValue = __
+            $SearchValue = 2
 
             $Array -contains $SearchValue | Should -BeTrue
         }
@@ -111,14 +110,14 @@ Describe 'Comparison Operators' {
             $Value = '1'
             $Array = 1, 2, 3, 4, 5
 
-            __ | Should -Be ($Value -contains $Array)
+            $false | Should -Be ($Value -contains $Array)
 
-            __ | Should -Be ($Array -contains @(1, 2))
+            $false | Should -Be ($Array -contains @(1, 2))
         }
 
         It 'has a logical opposite' {
             $Array = 1, 2, 3, 4, 5
-            $Value = __
+            $Value = 2
 
             $Array -notcontains $Value | Should -Be $false
         }
@@ -128,7 +127,7 @@ Describe 'Comparison Operators' {
 
         It 'returns $true if the left hand value occurs in the right hand array' {
             $Array = 1, 2, 3, 4, 5
-            $SearchValue = __
+            $SearchValue = 3
 
             # The syntax is exactly opposed to that used with -contains
             $SearchValue -in $Array | Should -BeTrue
@@ -137,7 +136,7 @@ Describe 'Comparison Operators' {
 
         It 'also has a logical opposite' {
             $Array = 4, 3, 1, 5, 2
-            $SearchValue = __
+            $SearchValue = 1
 
             $SearchValue -notin $Array | Should -BeFalse
         }
@@ -153,14 +152,14 @@ Describe 'Logical Operators' {
 
         It 'returns $true only if both inputs are $true' {
             $true -and $true | Should -BeTrue
-            __ -and $true | Should -Be $false
+            $false -and $true | Should -Be $false
         }
 
         It 'may coerce values to boolean' {
             $String = ''
             $Number = 1
 
-            __ | Should -Be ($String -and $Number)
+            $false | Should -Be ($String -and $Number)
         }
     }
 
@@ -168,12 +167,12 @@ Describe 'Logical Operators' {
 
         It 'returns $true if either input is $true' {
             $true -or $false | Should -Be $true
-            __ | Should -Be ($false -or $true)
-            __ | Should -Be ($true -or $true)
+            $true | Should -Be ($false -or $true)
+            $true | Should -Be ($true -or $true)
         }
 
         It 'may coerce values to boolean' {
-            $String = '__'
+            $String = ''
             $Number = 0
 
             $String -or $Number | Should -BeFalse
@@ -184,8 +183,8 @@ Describe 'Logical Operators' {
 
         It 'returns $true if only one input is $true' {
             $true -xor $false | Should -Be $true
-            __ | Should -Be ($true -xor $true)
-            __ | Should -Be ($false -xor $false)
+            $false | Should -Be ($true -xor $true)
+            $false | Should -Be ($false -xor $false)
         }
     }
 
@@ -193,11 +192,11 @@ Describe 'Logical Operators' {
 
         It 'negates a boolean value' {
             -not $true | Should -Be $false
-            __ | Should -Be (-not $false)
+            $true | Should -Be (-not $false)
         }
 
         It 'can be shortened to !' {
-            __ | Should -Be (!$true)
+            -not $true | Should -Be (!$true)
         }
     }
 }
